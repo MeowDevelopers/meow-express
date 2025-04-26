@@ -1,0 +1,558 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model QRTZ_BLOB_TRIGGERS {
+  SCHED_NAME    String        @db.VarChar(120)
+  TRIGGER_NAME  String        @db.VarChar(190)
+  TRIGGER_GROUP String        @db.VarChar(190)
+  BLOB_DATA     Bytes?        @db.Blob
+  QRTZ_TRIGGERS QRTZ_TRIGGERS @relation(fields: [SCHED_NAME, TRIGGER_NAME, TRIGGER_GROUP], references: [SCHED_NAME, TRIGGER_NAME, TRIGGER_GROUP], onDelete: NoAction, onUpdate: NoAction, map: "QRTZ_BLOB_TRIGGERS_ibfk_1")
+
+  @@id([SCHED_NAME, TRIGGER_NAME, TRIGGER_GROUP])
+  @@index([SCHED_NAME, TRIGGER_NAME, TRIGGER_GROUP], map: "SCHED_NAME")
+}
+
+model QRTZ_CALENDARS {
+  SCHED_NAME    String @db.VarChar(120)
+  CALENDAR_NAME String @db.VarChar(190)
+  CALENDAR      Bytes  @db.Blob
+
+  @@id([SCHED_NAME, CALENDAR_NAME])
+}
+
+model QRTZ_CRON_TRIGGERS {
+  SCHED_NAME      String        @db.VarChar(120)
+  TRIGGER_NAME    String        @db.VarChar(190)
+  TRIGGER_GROUP   String        @db.VarChar(190)
+  CRON_EXPRESSION String        @db.VarChar(120)
+  TIME_ZONE_ID    String?       @db.VarChar(80)
+  QRTZ_TRIGGERS   QRTZ_TRIGGERS @relation(fields: [SCHED_NAME, TRIGGER_NAME, TRIGGER_GROUP], references: [SCHED_NAME, TRIGGER_NAME, TRIGGER_GROUP], onDelete: NoAction, onUpdate: NoAction, map: "QRTZ_CRON_TRIGGERS_ibfk_1")
+
+  @@id([SCHED_NAME, TRIGGER_NAME, TRIGGER_GROUP])
+}
+
+model QRTZ_FIRED_TRIGGERS {
+  SCHED_NAME        String  @db.VarChar(120)
+  ENTRY_ID          String  @db.VarChar(95)
+  TRIGGER_NAME      String  @db.VarChar(190)
+  TRIGGER_GROUP     String  @db.VarChar(190)
+  INSTANCE_NAME     String  @db.VarChar(190)
+  FIRED_TIME        BigInt
+  SCHED_TIME        BigInt
+  PRIORITY          Int
+  STATE             String  @db.VarChar(16)
+  JOB_NAME          String? @db.VarChar(190)
+  JOB_GROUP         String? @db.VarChar(190)
+  IS_NONCONCURRENT  String? @db.VarChar(1)
+  REQUESTS_RECOVERY String? @db.VarChar(1)
+
+  @@id([SCHED_NAME, ENTRY_ID])
+  @@index([SCHED_NAME, INSTANCE_NAME, REQUESTS_RECOVERY], map: "IDX_QRTZ_FT_INST_JOB_REQ_RCVRY")
+  @@index([SCHED_NAME, JOB_GROUP], map: "IDX_QRTZ_FT_JG")
+  @@index([SCHED_NAME, JOB_NAME, JOB_GROUP], map: "IDX_QRTZ_FT_J_G")
+  @@index([SCHED_NAME, TRIGGER_GROUP], map: "IDX_QRTZ_FT_TG")
+  @@index([SCHED_NAME, INSTANCE_NAME], map: "IDX_QRTZ_FT_TRIG_INST_NAME")
+  @@index([SCHED_NAME, TRIGGER_NAME, TRIGGER_GROUP], map: "IDX_QRTZ_FT_T_G")
+}
+
+model QRTZ_JOB_DETAILS {
+  SCHED_NAME        String          @db.VarChar(120)
+  JOB_NAME          String          @db.VarChar(190)
+  JOB_GROUP         String          @db.VarChar(190)
+  DESCRIPTION       String?         @db.VarChar(250)
+  JOB_CLASS_NAME    String          @db.VarChar(250)
+  IS_DURABLE        String          @db.VarChar(1)
+  IS_NONCONCURRENT  String          @db.VarChar(1)
+  IS_UPDATE_DATA    String          @db.VarChar(1)
+  REQUESTS_RECOVERY String          @db.VarChar(1)
+  JOB_DATA          Bytes?          @db.Blob
+  QRTZ_TRIGGERS     QRTZ_TRIGGERS[]
+
+  @@id([SCHED_NAME, JOB_NAME, JOB_GROUP])
+  @@index([SCHED_NAME, JOB_GROUP], map: "IDX_QRTZ_J_GRP")
+  @@index([SCHED_NAME, REQUESTS_RECOVERY], map: "IDX_QRTZ_J_REQ_RECOVERY")
+}
+
+model QRTZ_LOCKS {
+  SCHED_NAME String @db.VarChar(120)
+  LOCK_NAME  String @db.VarChar(40)
+
+  @@id([SCHED_NAME, LOCK_NAME])
+}
+
+model QRTZ_PAUSED_TRIGGER_GRPS {
+  SCHED_NAME    String @db.VarChar(120)
+  TRIGGER_GROUP String @db.VarChar(190)
+
+  @@id([SCHED_NAME, TRIGGER_GROUP])
+}
+
+model QRTZ_SCHEDULER_STATE {
+  SCHED_NAME        String @db.VarChar(120)
+  INSTANCE_NAME     String @db.VarChar(190)
+  LAST_CHECKIN_TIME BigInt
+  CHECKIN_INTERVAL  BigInt
+
+  @@id([SCHED_NAME, INSTANCE_NAME])
+}
+
+model QRTZ_SIMPLE_TRIGGERS {
+  SCHED_NAME      String        @db.VarChar(120)
+  TRIGGER_NAME    String        @db.VarChar(190)
+  TRIGGER_GROUP   String        @db.VarChar(190)
+  REPEAT_COUNT    BigInt
+  REPEAT_INTERVAL BigInt
+  TIMES_TRIGGERED BigInt
+  QRTZ_TRIGGERS   QRTZ_TRIGGERS @relation(fields: [SCHED_NAME, TRIGGER_NAME, TRIGGER_GROUP], references: [SCHED_NAME, TRIGGER_NAME, TRIGGER_GROUP], onDelete: NoAction, onUpdate: NoAction, map: "QRTZ_SIMPLE_TRIGGERS_ibfk_1")
+
+  @@id([SCHED_NAME, TRIGGER_NAME, TRIGGER_GROUP])
+}
+
+model QRTZ_SIMPROP_TRIGGERS {
+  SCHED_NAME    String        @db.VarChar(120)
+  TRIGGER_NAME  String        @db.VarChar(190)
+  TRIGGER_GROUP String        @db.VarChar(190)
+  STR_PROP_1    String?       @db.VarChar(512)
+  STR_PROP_2    String?       @db.VarChar(512)
+  STR_PROP_3    String?       @db.VarChar(512)
+  INT_PROP_1    Int?
+  INT_PROP_2    Int?
+  LONG_PROP_1   BigInt?
+  LONG_PROP_2   BigInt?
+  DEC_PROP_1    Decimal?      @db.Decimal(13, 4)
+  DEC_PROP_2    Decimal?      @db.Decimal(13, 4)
+  BOOL_PROP_1   String?       @db.VarChar(1)
+  BOOL_PROP_2   String?       @db.VarChar(1)
+  QRTZ_TRIGGERS QRTZ_TRIGGERS @relation(fields: [SCHED_NAME, TRIGGER_NAME, TRIGGER_GROUP], references: [SCHED_NAME, TRIGGER_NAME, TRIGGER_GROUP], onDelete: NoAction, onUpdate: NoAction, map: "QRTZ_SIMPROP_TRIGGERS_ibfk_1")
+
+  @@id([SCHED_NAME, TRIGGER_NAME, TRIGGER_GROUP])
+}
+
+model QRTZ_TRIGGERS {
+  SCHED_NAME            String                 @db.VarChar(120)
+  TRIGGER_NAME          String                 @db.VarChar(190)
+  TRIGGER_GROUP         String                 @db.VarChar(190)
+  JOB_NAME              String                 @db.VarChar(190)
+  JOB_GROUP             String                 @db.VarChar(190)
+  DESCRIPTION           String?                @db.VarChar(250)
+  NEXT_FIRE_TIME        BigInt?
+  PREV_FIRE_TIME        BigInt?
+  PRIORITY              Int?
+  TRIGGER_STATE         String                 @db.VarChar(16)
+  TRIGGER_TYPE          String                 @db.VarChar(8)
+  START_TIME            BigInt
+  END_TIME              BigInt?
+  CALENDAR_NAME         String?                @db.VarChar(190)
+  MISFIRE_INSTR         Int?                   @db.SmallInt
+  JOB_DATA              Bytes?                 @db.Blob
+  QRTZ_BLOB_TRIGGERS    QRTZ_BLOB_TRIGGERS?
+  QRTZ_CRON_TRIGGERS    QRTZ_CRON_TRIGGERS?
+  QRTZ_SIMPLE_TRIGGERS  QRTZ_SIMPLE_TRIGGERS?
+  QRTZ_SIMPROP_TRIGGERS QRTZ_SIMPROP_TRIGGERS?
+  QRTZ_JOB_DETAILS      QRTZ_JOB_DETAILS       @relation(fields: [SCHED_NAME, JOB_NAME, JOB_GROUP], references: [SCHED_NAME, JOB_NAME, JOB_GROUP], onDelete: NoAction, onUpdate: NoAction, map: "QRTZ_TRIGGERS_ibfk_1")
+
+  @@id([SCHED_NAME, TRIGGER_NAME, TRIGGER_GROUP])
+  @@index([SCHED_NAME, CALENDAR_NAME], map: "IDX_QRTZ_T_C")
+  @@index([SCHED_NAME, TRIGGER_GROUP], map: "IDX_QRTZ_T_G")
+  @@index([SCHED_NAME, JOB_NAME, JOB_GROUP], map: "IDX_QRTZ_T_J")
+  @@index([SCHED_NAME, JOB_GROUP], map: "IDX_QRTZ_T_JG")
+  @@index([SCHED_NAME, NEXT_FIRE_TIME], map: "IDX_QRTZ_T_NEXT_FIRE_TIME")
+  @@index([SCHED_NAME, MISFIRE_INSTR, NEXT_FIRE_TIME], map: "IDX_QRTZ_T_NFT_MISFIRE")
+  @@index([SCHED_NAME, TRIGGER_STATE, NEXT_FIRE_TIME], map: "IDX_QRTZ_T_NFT_ST")
+  @@index([SCHED_NAME, MISFIRE_INSTR, NEXT_FIRE_TIME, TRIGGER_STATE], map: "IDX_QRTZ_T_NFT_ST_MISFIRE")
+  @@index([SCHED_NAME, MISFIRE_INSTR, NEXT_FIRE_TIME, TRIGGER_GROUP, TRIGGER_STATE], map: "IDX_QRTZ_T_NFT_ST_MISFIRE_GRP")
+  @@index([SCHED_NAME, TRIGGER_GROUP, TRIGGER_STATE], map: "IDX_QRTZ_T_N_G_STATE")
+  @@index([SCHED_NAME, TRIGGER_NAME, TRIGGER_GROUP, TRIGGER_STATE], map: "IDX_QRTZ_T_N_STATE")
+  @@index([SCHED_NAME, TRIGGER_STATE], map: "IDX_QRTZ_T_STATE")
+}
+
+model bag {
+  bag_id BigInt @id @default(autoincrement())
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model ban_word {
+  id          BigInt   @id @default(autoincrement()) @db.UnsignedBigInt
+  word        String   @unique(map: "word") @db.VarChar(255)
+  created_at  DateTime @db.DateTime(0)
+  modified_at DateTime @db.DateTime(0)
+}
+
+model flyway_schema_history {
+  installed_rank Int      @id
+  version        String?  @db.VarChar(50)
+  description    String   @db.VarChar(200)
+  type           String   @db.VarChar(20)
+  script         String   @db.VarChar(1000)
+  checksum       Int?
+  installed_by   String   @db.VarChar(100)
+  installed_on   DateTime @default(now()) @db.Timestamp(0)
+  execution_time Int
+  success        Boolean
+
+  @@index([success], map: "flyway_schema_history_s_idx")
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model follow {
+  follow_id      BigInt   @id @default(autoincrement()) @db.UnsignedBigInt
+  user_id        BigInt   @db.UnsignedBigInt
+  target_user_id BigInt   @db.UnsignedBigInt
+  created_at     DateTime @db.DateTime(0)
+  modified_at    DateTime @db.DateTime(0)
+  deleted        Boolean  @default(false)
+
+  @@unique([user_id, target_user_id], map: "UNIQUE_FOLLOW")
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model hashtag {
+  hashtag_id  BigInt   @id @default(autoincrement()) @db.UnsignedBigInt
+  hashtag     String   @unique(map: "hashtag") @db.VarChar(255)
+  created_at  DateTime @default(now()) @db.DateTime(0)
+  modified_at DateTime @db.DateTime(0)
+
+  @@unique([hashtag_id, hashtag], map: "UNIQUE_FOLLOW")
+  @@index([hashtag], map: "idx_hashtag")
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model hobby {
+  hobby_id          BigInt   @id @default(autoincrement()) @db.UnsignedBigInt
+  user_id           BigInt   @db.UnsignedBigInt
+  hobby_category_id BigInt   @db.UnsignedBigInt
+  hobby_name        String   @db.LongText
+  hobby_group_id    BigInt
+  created_at        DateTime @default(now()) @db.DateTime(0)
+  created_by        BigInt   @db.UnsignedBigInt
+  modified_at       DateTime @db.DateTime(0)
+  modified_by       BigInt   @db.UnsignedBigInt
+  deleted           Boolean  @default(false)
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model hobby_category {
+  hobby_category_id        BigInt                             @id @default(autoincrement()) @db.UnsignedBigInt
+  hobby_category_name      hobby_category_hobby_category_name
+  hobby_category_thumbnail String                             @db.VarChar(255)
+  created_at               DateTime                           @db.DateTime(0)
+  modified_at              DateTime                           @db.DateTime(0)
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model hobby_comment {
+  comment_id  BigInt    @id @default(autoincrement()) @db.UnsignedBigInt
+  post_id     BigInt    @db.UnsignedBigInt
+  comment     String    @db.TinyText
+  created_at  DateTime  @db.DateTime(0)
+  created_by  BigInt    @db.UnsignedBigInt
+  modified_at DateTime  @db.DateTime(0)
+  modified_by BigInt    @db.UnsignedBigInt
+  deleted     Boolean   @default(false)
+  deleted_at  DateTime? @db.DateTime(0)
+
+  @@unique([created_by, post_id], map: "unique_comment")
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model hobby_group {
+  hobby_group_id    BigInt    @id @default(autoincrement()) @db.UnsignedBigInt
+  user_id           BigInt    @db.UnsignedBigInt
+  hobby_group_title String    @db.VarChar(30)
+  deleted           Boolean   @default(false)
+  created_at        DateTime  @default(now()) @db.DateTime(0)
+  created_by        BigInt    @db.UnsignedBigInt
+  modified_at       DateTime  @db.DateTime(0)
+  modified_by       BigInt    @db.UnsignedBigInt
+  deleted_at        DateTime? @db.DateTime(0)
+
+  @@unique([created_by, user_id, hobby_group_title], map: "unique_hobby_group")
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model hobby_like {
+  hobby_like_id BigInt   @id @default(autoincrement()) @db.UnsignedBigInt
+  user_id       BigInt   @db.UnsignedBigInt
+  hobby_post_id BigInt   @db.UnsignedBigInt
+  created_at    DateTime @default(now()) @db.DateTime(0)
+  created_by    BigInt   @db.UnsignedBigInt
+  modified_at   DateTime @db.DateTime(0)
+  modified_by   BigInt   @db.UnsignedBigInt
+  deleted       Boolean  @default(false)
+
+  @@unique([user_id, hobby_post_id], map: "unique_hobby_like")
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model hobby_photo {
+  hobby_photo_id   BigInt   @id @default(autoincrement()) @db.UnsignedBigInt
+  hobby_post_id    BigInt   @db.UnsignedBigInt
+  hobby_photo_path String   @db.VarChar(255)
+  deleted          Boolean  @default(false)
+  created_at       DateTime @default(now()) @db.DateTime(0)
+  created_by       BigInt   @db.UnsignedBigInt
+  modified_at      DateTime @db.DateTime(0)
+  modified_by      BigInt   @db.UnsignedBigInt
+
+  @@unique([created_by, hobby_post_id, hobby_photo_path], map: "unique_hobby_photo")
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model hobby_post {
+  hobby_post_id        BigInt    @id @default(autoincrement()) @db.UnsignedBigInt
+  user_id              BigInt    @db.UnsignedBigInt
+  hobby_id             BigInt    @db.UnsignedBigInt
+  hobby_post_content   String    @db.VarChar(1000)
+  hobby_post_thumbnail String    @db.VarChar(500)
+  deleted              Boolean   @default(false)
+  created_at           DateTime  @default(now()) @db.DateTime(0)
+  created_by           BigInt    @db.UnsignedBigInt
+  modified_at          DateTime  @db.DateTime(0)
+  modified_by          BigInt    @db.UnsignedBigInt
+  deleted_at           DateTime? @db.DateTime(0)
+
+  @@unique([created_by, user_id, hobby_id], map: "unique_hobby_post")
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model hobby_sub_comment {
+  sub_comment_id BigInt    @id @default(autoincrement()) @db.UnsignedBigInt
+  comment_id     BigInt    @db.UnsignedBigInt
+  post_id        BigInt    @db.UnsignedBigInt
+  sub_comment    String    @db.TinyText
+  created_at     DateTime  @db.DateTime(0)
+  created_by     BigInt    @db.UnsignedBigInt
+  modified_at    DateTime  @db.DateTime(0)
+  modified_by    BigInt    @db.UnsignedBigInt
+  deleted        Boolean   @default(false)
+  deleted_at     DateTime? @db.DateTime(0)
+
+  @@unique([created_by, comment_id, post_id], map: "unique_sub_comment")
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model hobby_top_ten {
+  hobby_top_ten_id BigInt                 @id @default(autoincrement()) @db.UnsignedBigInt
+  hobby_post_id    BigInt                 @db.UnsignedBigInt
+  view_count       BigInt                 @db.UnsignedBigInt
+  category         hobby_top_ten_category
+  created_at       DateTime               @db.Date
+
+  @@unique([hobby_post_id, view_count, created_at], map: "unique_top_ten")
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model hobby_view_history {
+  hobby_view_history_id BigInt                      @id @default(autoincrement()) @db.UnsignedBigInt
+  hobby_post_id         BigInt                      @db.UnsignedBigInt
+  user_id               BigInt                      @db.UnsignedBigInt
+  category              hobby_view_history_category
+  created_at            DateTime                    @db.DateTime(0)
+  modified_at           DateTime                    @db.DateTime(0)
+  created_by            BigInt                      @db.UnsignedBigInt
+  modified_by           BigInt                      @db.UnsignedBigInt
+  deleted               Boolean                     @default(false)
+
+  @@unique([user_id, hobby_post_id], map: "unique_user_hobby")
+  @@index([hobby_post_id, created_at], map: "idx_hobby_post_and_created_at")
+  @@index([user_id], map: "idx_user_id")
+}
+
+model item {
+  item_id   BigInt  @id @default(autoincrement())
+  item_name String? @db.VarChar(100)
+  bag_id    BigInt?
+}
+
+model member {
+  studentId    BigInt  @id @default(autoincrement())
+  studentName  String? @db.VarChar(10)
+  studentEmail String? @db.VarChar(50)
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model policy_agree {
+  policy_agree_id   BigInt                   @id @default(autoincrement()) @db.UnsignedBigInt
+  policy_type       policy_agree_policy_type
+  policy_history_id BigInt                   @db.UnsignedBigInt
+  user_id           BigInt                   @db.UnsignedBigInt
+  created_at        DateTime                 @db.DateTime(0)
+  modified_at       DateTime                 @db.DateTime(0)
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model policy_history {
+  policy_history_id  BigInt                     @id @default(autoincrement()) @db.UnsignedBigInt
+  policy_type        policy_history_policy_type
+  revision_date      DateTime                   @db.DateTime(0)
+  pdf_file_path      String                     @db.VarChar(300)
+  required           Boolean                    @default(false)
+  is_latest_revision Boolean                    @default(false)
+  created_at         DateTime                   @db.DateTime(0)
+  modified_at        DateTime                   @db.DateTime(0)
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model post_hashtag {
+  post_hashtags_id BigInt    @id @default(autoincrement()) @db.UnsignedBigInt
+  post_id          BigInt    @db.UnsignedBigInt
+  hashtag_id       BigInt    @db.UnsignedBigInt
+  created_at       DateTime  @default(now()) @db.DateTime(0)
+  modified_at      DateTime  @db.DateTime(0)
+  deleted          Boolean   @default(false)
+  deleted_at       DateTime? @db.DateTime(0)
+
+  @@unique([post_hashtags_id, post_id, hashtag_id], map: "UNIQUE_FOLLOW")
+  @@index([hashtag_id], map: "idx_hashtag_id")
+  @@index([post_id], map: "idx_post_id")
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model recommended_feed {
+  recommended_feed_id BigInt                             @id @default(autoincrement()) @db.UnsignedBigInt
+  hobby_post_id       BigInt                             @db.UnsignedBigInt
+  recommended_type    recommended_feed_recommended_type?
+  created_at          DateTime                           @default(now()) @db.DateTime(0)
+  created_by          BigInt                             @db.UnsignedBigInt
+  modified_at         DateTime                           @db.DateTime(0)
+  modified_by         BigInt                             @db.UnsignedBigInt
+  deleted             Boolean                            @default(false)
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model report {
+  report_id      BigInt               @id @default(autoincrement()) @db.UnsignedBigInt
+  user_id        BigInt               @db.UnsignedBigInt
+  hobby_post_id  BigInt?              @db.UnsignedBigInt
+  comment_id     BigInt?              @db.UnsignedBigInt
+  sub_comment_id BigInt?              @db.UnsignedBigInt
+  report_content String               @db.VarChar(1000)
+  report_status  report_report_status
+  created_at     DateTime             @default(now()) @db.DateTime(0)
+  created_by     BigInt               @db.UnsignedBigInt
+  modified_at    DateTime             @db.DateTime(0)
+  modified_by    BigInt               @db.UnsignedBigInt
+  deleted        Boolean              @default(false)
+
+  @@unique([created_at, user_id], map: "unique_report")
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model setting {
+  setting_id   BigInt   @id @default(autoincrement()) @db.UnsignedBigInt
+  user_id      BigInt   @db.UnsignedBigInt
+  notification Boolean  @default(false)
+  marketing    Boolean  @default(false)
+  created_at   DateTime @default(now()) @db.DateTime(0)
+  created_by   BigInt   @db.UnsignedBigInt
+  modified_at  DateTime @db.DateTime(0)
+  modified_by  BigInt   @db.UnsignedBigInt
+  deleted      Boolean  @default(false)
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model today_hobby {
+  today_hobby_id                  BigInt   @id @default(autoincrement()) @db.UnsignedBigInt
+  hobby_category_id               BigInt?  @db.UnsignedBigInt
+  today_theme_code                BigInt?  @db.UnsignedBigInt
+  today_theme_name                String   @db.VarChar(255)
+  today_hobby_details_name        String   @unique(map: "today_hobby_details_name") @db.VarChar(255)
+  today_hobby_details_description String   @db.Text
+  today_hobby_details_attributes  String   @db.Text
+  today_hobby_thumbnail           String   @db.VarChar(255)
+  created_at                      DateTime @default(now()) @db.DateTime(0)
+  modified_at                     DateTime @db.DateTime(0)
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model user {
+  user_id              BigInt             @id @default(autoincrement()) @db.UnsignedBigInt
+  user_email           String?            @unique(map: "user_email") @db.VarChar(100)
+  user_profile         String?            @db.LongText
+  user_password        String?            @db.VarChar(255)
+  user_type            user_user_type     @default(BASIC_USER)
+  user_nickname        String?            @unique(map: "user_nickname") @db.VarChar(30)
+  provider_type        user_provider_type
+  provider_key         String?            @unique(map: "provider_key") @db.VarChar(255)
+  created_at           DateTime           @db.DateTime(0)
+  modified_at          DateTime           @db.DateTime(0)
+  user_last_login_date DateTime           @db.DateTime(0)
+  deleted              Boolean            @default(false)
+  dormancy             Boolean            @default(false)
+  refresh_token        String?            @db.VarChar(255)
+  profile_description  String?            @db.VarChar(30)
+
+  @@index([user_email], map: "idx_email")
+  @@index([user_nickname], map: "idx_nickname")
+  @@index([provider_key], map: "idx_provider_key")
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model user_metrics {
+  id          BigInt   @id @default(autoincrement())
+  new_users   BigInt   @default(0)
+  total_users BigInt   @default(0)
+  created_at  DateTime @db.DateTime(0)
+  modified_at DateTime @db.DateTime(0)
+}
+
+enum hobby_category_hobby_category_name {
+  cooking
+  exercise
+}
+
+enum policy_agree_policy_type {
+  REQUIRED_IS_OVER_FOURTEEN
+  REQUIRED_TERMS_OF_SERVICE
+  REQUIRED_PERSONAL_INFO_PROCESS
+  OPTION_PERSONAL_INFO_MARKETING
+  OPTION_EVENT_MAIL_OR_SMS
+}
+
+enum policy_history_policy_type {
+  REQUIRED_IS_OVER_FOURTEEN
+  REQUIRED_TERMS_OF_SERVICE
+  REQUIRED_PERSONAL_INFO_PROCESS
+  OPTION_PERSONAL_INFO_MARKETING
+  OPTION_EVENT_MAIL_OR_SMS
+}
+
+enum recommended_feed_recommended_type {
+  INFLUENCE
+  POPULAR_POST
+}
+
+enum hobby_top_ten_category {
+  cooking
+  exercise
+}
+
+enum hobby_view_history_category {
+  cooking
+  exercise
+}
+
+enum user_user_type {
+  ADMIN
+  BASIC_USER
+}
+
+enum report_report_status {
+  PENDING
+  IN_PROGRESS
+  COMPLETED
+  REJECTED
+}
+
+enum user_provider_type {
+  KAKAO
+  NAVER
+  GOOGLE
+  ORIGIN
+}
