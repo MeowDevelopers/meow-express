@@ -4,10 +4,10 @@
   "main": "index.js",
   "scripts": {
     "start": "node dist/index.ts",
-    "choi dev": "ts-node choi/src/index.ts",
-    "kim dev": "ts-node kim/src/index.ts",
-    "ko dev": "ts-node ko/src/index.ts",
-    "lee dev": "ts-node lee/src/index.ts",
+    "choi-dev": "ts-node choi/src/index.ts",
+    "kim-dev": "ts-node kim/src/index.ts",
+    "ko-dev": "ts-node ko/src/index.ts",
+    "lee-dev": "ts-node lee/src/index.ts",
     "build": "tsc"
   },
   "keywords": [],
@@ -21,6 +21,7 @@
     "typescript": "^5.8.3"
   },
   "dependencies": {
-    "express": "^5.1.0"
+    "express": "^5.1.0",
+    "mysql2": "^3.14.0"
   }
 }

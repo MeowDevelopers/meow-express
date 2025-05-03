@@ -1,6 +1,7 @@
 // src/routes/user.route.ts
 import { Router } from "express";
-import { getUsers, getUserById } from "../../controllers/user/controller";
+import { getUsers, getUserById } from "../../modules/user/controller";
+
 const router = Router();
 
 router.get("/", getUsers);
