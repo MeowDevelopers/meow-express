@@ -10,6 +10,7 @@ npm install
 
 ## 패키지 규칙
 
+```
 src/
 ├── modules/
 │ └── user/
@@ -21,3 +22,4 @@ src/
 ├── utils/
 ├── config/
 └── index.ts
+```
