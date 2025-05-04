@@ -134,3 +134,13 @@ dist
 .yarn/build-state.yml
 .yarn/install-state.gz
 .pnp.*
+
+# Prisma client 생성 후 생기는 파일
+prisma/generated/
+prisma/client/
+prisma/migrations/
+
+# OS 및 에디터 관련
+.DS_Store
+.vscode/
+*.log
