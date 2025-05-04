@@ -6,12 +6,6 @@
     // CommonJS는 Node.js에서 사용하는 모듈 시스템입니다
     "module": "CommonJS",
 
-    // 소스코드 루트 디렉토리 (src 폴더 아래로 코드 정리)
-    "rootDir": "src",
-
-    // 컴파일된 결과물이 저장될 디렉토리 (배포용)
-    "outDir": "dist",
-
     // 엄격한 타입 체크 활성화 (가능한 켜두는 걸 권장)
     "strict": true,
 

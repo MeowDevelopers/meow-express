@@ -3,8 +3,7 @@
 };
 
 import express from "express";
-import users from "./router/user/route";
-import { getUSerController } from "./modules/user/controllers/controller";
+import { getUSerController } from "./modules/user/controllers/controller"
 
 const app = express();
 const PORT = 3000;

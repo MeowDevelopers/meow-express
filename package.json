@@ -4,7 +4,10 @@
   "main": "index.js",
   "scripts": {
     "start": "node dist/index.ts",
-    "dev": "ts-node src/index.ts",
+    "choi-dev": "ts-node choi/src/index.ts",
+    "kim-dev": "ts-node kim/src/index.ts",
+    "ko-dev": "ts-node ko/src/index.ts",
+    "lee-dev": "ts-node lee/src/index.ts",
     "build": "tsc"
   },
   "keywords": [],
