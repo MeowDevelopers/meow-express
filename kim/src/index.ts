@@ -3,13 +3,13 @@
 };
 
 import express from "express";
-import { getUSerController } from "./modules/user/controllers/controller"
+import router from "./router/user/route";
 
 const app = express();
 const PORT = 3000;
 
 app.use(express.json());
-app.use("/users", getUSerController);
+app.use("/users", router);
 
 app.listen(PORT, () => {
   console.log(`✅ Server is running at http://localhost:${PORT}`);
