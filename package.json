@@ -6,7 +6,7 @@
     "start": "node dist/index.ts",
     "choi-dev": "ts-node choi/src/index.ts",
     "kim-dev": "ts-node kim/src/index.ts",
-    "ko-dev": "ts-node ko/src/index.ts",
+    "ko-dev": "ts-node --compiler-options '{\"module\":\"CommonJS\"}' ko/src/index.ts",
     "lee-dev": "ts-node lee/src/index.ts",
     "build": "tsc"
   },
@@ -17,12 +17,12 @@
   "devDependencies": {
     "@types/express": "^5.0.1",
     "@types/node": "^22.14.1",
-    "prisma": "^6.6.0",
+    "prisma": "^6.7.0",
     "ts-node": "^10.9.2",
     "typescript": "^5.8.3"
   },
   "dependencies": {
-    "@prisma/client": "^6.6.0",
+    "@prisma/client": "^6.7.0",
     "dotenv": "^16.5.0",
     "express": "^5.1.0",
     "mysql2": "^3.14.0"
