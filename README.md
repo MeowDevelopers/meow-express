@@ -2,6 +2,9 @@
 
 express server
 
+2025년 5월 8일 기준으로 Express Example 종료
+추후 니즈가 있을 시 다시 재개
+
 ## CLI 모음
 
 npm install
